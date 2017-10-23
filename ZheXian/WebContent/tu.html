@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>折线图</title>
+    <!--[if lte IE 8]>
+      <script language="javascript" type="text/javascript" src="js/excanvas.min.js"></script>
+    <![endif]-->
+    
+    <script language="javascript" type="text/javascript" src="js/jquery.js"></script>
+    <script language="javascript" type="text/javascript" src="js/jquery.flot.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        AlPriceQuery();
+      });
+     
+      //异步从后端获取每月人数
+      
+      
+     var prople=[30, 80, 60, 100, 30, 30, 80, 60, 100, 30 ,30, 15];//查询其中一年每月人数
+     var every_month=["1", "2", "3", "4", "5", "6", "7", "8", "9", "10","11","12"];//每月人数
+      
+     function AlPriceQuery(){
+        var result = {
+          AvgPrice : prople,//查询其中一年每月人数
+          Date: every_month,//每月人数
+        }
+        var DataArr = [];//y轴数据
+        var TickArr = [];//x轴自定义刻度数据
+        var PriceArr = [];//价格
+        for(var i=0; i<result.Date.length; i++){
+          DataArr.push([ i+1, result.AvgPrice[i] ]);
+          TickArr.push([ i+1, result.Date[i] ]);
+          PriceArr.push(result.AvgPrice[i]);
+        }
+        var MinPrice = PriceArr.sort(function(a, b){return a - b})[0];//获取最小的铝锭价
+        if(MinPrice % 20 == 0){
+          MinPrice = MinPrice - 20;
+        }
+        else{
+          MinPrice = MinPrice - 30;
+        }
+        //数据源
+        var DataSet = [{
+         // "label": "最近 " + result.Date.length + " 日学生人数",
+          "data": DataArr,//折线图数据
+        }];
+        //配置
+        var Options = {
+          xaxis: {
+            ticks: TickArr,//x轴自定义刻度数据
+          },
+          yaxis: {
+            min: MinPrice,//最小刻度
+            tickSize: 20,//递增量
+          },
+          series: {
+            lines: {
+              show: true,//显示线段
+              lineWidth: 1.5,
+            },
+            points: {
+              show: true,//显示节点
+              radius: 3,
+            },
+            color: "#7AC0DA",
+          },
+          grid: {
+            hoverable: true,//鼠标移动到节点会有效果
+            borderWidth: 1,//最外边的边框
+            backgroundColor: { colors: ["#ffffff", "#EDF5FF"] },
+          },
+          legend: {
+            noColumns: 0,
+            labelBoxBorderColor: "#000000",
+            position: "sw",
+            backgroundOpacity: 0.1,
+          },
+          shadowSize: 0,//曲线阴影
+        };
+        //节点hover事件
+        $.fn.UseTooltip = function () {
+          var PrePoint = null, PreLabel = null;
+          $(this).bind("plothover", function (event, pos, item) {
+            if (item) {
+              if ((PreLabel != item.series.label) || (PrePoint != item.dataIndex)) {
+                PrePoint = item.dataIndex;
+                PreLabel = item.series.label;
+                $("#tooltip").remove();
+                $(this).css({
+                  "cursor": "pointer"
+                })
+                if (item.seriesIndex == 0) {
+                  ShowTooltip(
+                    item.pageX + 100,
+                    item.pageY - 10,
+                    "#f7d373",
+                    result.Date[item.dataIndex] + "月, 人数: " + item.series.data[item.dataIndex][1]);
+                }
+              }
+            }
+            else {
+              PrePoint = null;
+              PreLabel = null;
+              $(this).css({
+                "cursor": "auto"
+              });
+              $("#tooltip").remove();
+            }
+          });
+        };
+        if (PriceArr.length > 0) {
+          $.plot($("#placeholder"), DataSet, Options);
+          $("#placeholder").UseTooltip();
+        }
+      }
+      //提示框
+      function ShowTooltip(x, y, color, contents) {
+        $('<div id="tooltip">' + contents + '</div>').css({
+          position: 'absolute',
+          display: 'none',
+          top: y - 40,
+          left: x - 120,
+          border: '2px solid ' + color,
+          padding: '3px',
+          'font-size': '9px',
+          'border-radius': '5px',
+          'background-color': '#fff',
+          'font-family': 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
+          opacity: 0.9
+        }).appendTo("body").fadeIn(200);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="placeholder" style="width:400px;height:200px;"></div>
+  </body>
+</html>

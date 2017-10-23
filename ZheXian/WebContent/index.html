@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="js/Chart.js"></script>
+<style type="text/css">
+	#myChart{
+		width:100px;
+		height:100px;
+	}
+</style>
+</head>
+<body>
+	<canvas id="myChart"></canvas>
+	
+	<script>
+		var data = {
+			labels:["星期一","星期二","星期三","星期四","星期五","星期六","星期日"],
+			datasets:[{
+				label:'每周评分',
+				data:[20, 19, 20, 19, 16, 18,17],
+				backgroundColor:[
+					'rgba(255, 99, 132, 0.2)',
+					'rgba(54, 162, 235, 0.2)',
+					'rgba(255, 206, 86, 0.2)',
+					'rgba(75, 192, 192, 0.2)',
+					'rgba(153, 102, 255, 0.2)',
+					'rgba(255, 159, 64, 0.2)',
+					'rgba(12, 76, 64, 0.2)'
+				],
+				borderColor: [
+					'rgba(255,99,132,1)',
+					'rgba(54, 162, 235, 1)',
+					'rgba(255, 206, 86, 1)',
+					'rgba(75, 192, 192, 1)',
+					'rgba(153, 102, 255, 1)',
+					'rgba(255, 159, 64, 1)',
+					'rgba(12, 76, 64, 0.2)'
+				],
+				borderWidth:1
+			}]
+		}
+		
+	
+		var ctx = document.getElementById("myChart").getContext("2d");
+		var myChart = new Chart(ctx,{
+			type: 'line',
+			data: data,
+			options: {
+				showLines: true, // disable for all datasets
+			}
+		});
+		
+		
+	</script>
+</body>
+</html>
